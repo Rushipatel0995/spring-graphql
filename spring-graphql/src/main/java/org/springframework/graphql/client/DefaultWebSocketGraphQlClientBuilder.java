@@ -45,12 +45,18 @@ final class DefaultWebSocketGraphQlClientBuilder
 
 	private URI url;
 
-	private final HttpHeaders headers = new HttpHeaders();
+	private HttpHeaders headers;
 
 	private final WebSocketClient webSocketClient;
 
 	private final CodecConfigurer codecConfigurer;
 
+	HttpHeaders getHeadersInstance(){
+		if(headers==null){
+			headers = new HttpHeaders();
+		}
+		return headers;
+	}
 
 	/**
 	 * Constructor to start via {@link WebSocketGraphQlClient#builder(String, WebSocketClient)}.
@@ -74,7 +80,7 @@ final class DefaultWebSocketGraphQlClientBuilder
 	 */
 	DefaultWebSocketGraphQlClientBuilder(WebSocketGraphQlTransport transport) {
 		this.url = transport.getUrl();
-		this.headers.putAll(transport.getHeaders());
+		this.getHeadersInstance().putAll(transport.getHeaders());
 		this.webSocketClient = transport.getWebSocketClient();
 		this.codecConfigurer = transport.getCodecConfigurer();
 	}
@@ -97,13 +103,13 @@ final class DefaultWebSocketGraphQlClientBuilder
 
 	@Override
 	public DefaultWebSocketGraphQlClientBuilder header(String name, String... values) {
-		this.headers.put(name, Arrays.asList(values));
+		this.getHeadersInstance().put(name, Arrays.asList(values));
 		return this;
 	}
 
 	@Override
 	public DefaultWebSocketGraphQlClientBuilder headers(Consumer<HttpHeaders> headersConsumer) {
-		headersConsumer.accept(this.headers);
+		headersConsumer.accept(this.getHeadersInstance());
 		return this;
 	}
 
@@ -121,7 +127,7 @@ final class DefaultWebSocketGraphQlClientBuilder
 				CodecDelegate.findJsonDecoder(this.codecConfigurer));
 
 		WebSocketGraphQlTransport transport = new WebSocketGraphQlTransport(
-				this.url, this.headers, this.webSocketClient, this.codecConfigurer, getInterceptor());
+				this.url, this.getHeadersInstance(), this.webSocketClient, this.codecConfigurer, getInterceptor());
 
 		GraphQlClient graphQlClient = super.buildGraphQlClient(transport);
 		return new DefaultWebSocketGraphQlClient(graphQlClient, transport, getBuilderInitializer());
@@ -151,7 +157,7 @@ final class DefaultWebSocketGraphQlClientBuilder
 		private final Consumer<AbstractGraphQlClientBuilder<?>> builderInitializer;
 
 		DefaultWebSocketGraphQlClient(GraphQlClient delegate, WebSocketGraphQlTransport transport,
-				Consumer<AbstractGraphQlClientBuilder<?>> builderInitializer) {
+									  Consumer<AbstractGraphQlClientBuilder<?>> builderInitializer) {
 
 			super(delegate);
 
