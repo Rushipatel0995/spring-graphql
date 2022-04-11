@@ -27,6 +27,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static org.springframework.graphql.client.UrlAdapter.toURI;
+
 
 /**
  * Default {@link HttpGraphQlClient.Builder} implementation, a simple wrapper
@@ -66,6 +68,7 @@ final class DefaultHttpGraphQlClientBuilder
 
 	@Override
 	public DefaultHttpGraphQlClientBuilder url(String url) {
+
 		this.webClientBuilder.baseUrl(url);
 		return this;
 	}

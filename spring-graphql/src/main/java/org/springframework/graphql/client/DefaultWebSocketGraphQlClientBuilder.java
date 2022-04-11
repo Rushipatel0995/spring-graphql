@@ -31,6 +31,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import static org.springframework.graphql.client.UrlAdapter.toURI;
+
 
 /**
  * Default {@link WebSocketGraphQlClient.Builder} that builds the underlying
@@ -51,6 +53,7 @@ final class DefaultWebSocketGraphQlClientBuilder
 
 	private final CodecConfigurer codecConfigurer;
 
+
 	HttpHeaders getHeadersInstance(){
 		if(headers==null){
 			headers = new HttpHeaders();
@@ -62,6 +65,7 @@ final class DefaultWebSocketGraphQlClientBuilder
 	 * Constructor to start via {@link WebSocketGraphQlClient#builder(String, WebSocketClient)}.
 	 */
 	DefaultWebSocketGraphQlClientBuilder(String url, WebSocketClient client) {
+
 		this(toURI(url), client);
 	}
 
@@ -95,10 +99,6 @@ final class DefaultWebSocketGraphQlClientBuilder
 	public DefaultWebSocketGraphQlClientBuilder url(URI url) {
 		this.url = url;
 		return this;
-	}
-
-	private static URI toURI(String url) {
-		return new DefaultUriBuilderFactory().uriString(url).build();
 	}
 
 	@Override
